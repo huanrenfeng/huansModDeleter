@@ -1,0 +1,181 @@
+<!doctype html>
+<html  lang="en">
+<head>
+	 <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	
+	<style>
+	div,input {background-color: black;}
+	h1,h2,h3,h4,h5,h6,p,li,input  {color: white;}
+	.bd-navbar	{min-height:4rem;background-color:#563d7c;}
+	
+	body {background-color: #2a2c2e;}
+	</style>
+	
+	
+	<title>HMD</title>
+	
+	
+</head>
+
+<body>
+	<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
+		
+		<h1> Huan's Mod Deleter </h1>
+				
+		<ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+			<li class="nav-item">
+				<a class="nav-link " href="https://www.patreon.com/modderHuan">Patreon</a>
+			</li>
+			
+			<li class="nav-item">
+				<a class="nav-link " href="https://discord.gg/6JSX6QR">Discord</a>
+			</li>
+			
+			<li class="nav-item">
+				<a class="nav-link " href="http://huanrenfeng.tumblr.com/">Tumblr</a>
+			</li>
+		</ul>
+	</header>
+	
+	<div class="container-fluid">
+		<div class="row flex-xl-nowrap">
+			
+			<main class="col-12 col-md-4 col-xl-4 py-md-3 pl-md-5 bd-content">
+				<div>
+					<h2> 7z Path: </h2>
+					<p id="t7p">{{.The7zDirectory}}</p>
+					
+					<div class="form-group row">
+						<div class="col-sm-10">
+							<input type="text"  class="form-control" id="c7">
+						</div>
+						
+						<button  type="button" class="btn btn-dark" onclick="c7f()">Change</button>
+					</div>
+				</div>
+					
+				<div>
+					<h2> Game Directory: </h2>
+					<p id="gdp">{{.TheGameDirectory}}</p>
+					
+					<div class="form-group row">
+						<div class="col-sm-10">
+							<input type="text"  class="form-control" id="gd">
+						</div>
+						<button  type="button" class="btn btn-dark" onclick="CGD()">Change</button>
+					</div>
+				</div>
+				
+				<div>
+					<h2> Mod To Delete: </h2>
+
+					<div class="form-group row">
+						<div class="col-sm-10">
+							<input type="text"  class="form-control" id="modFile">
+						</div>
+						
+						<button  type="button" class="btn btn-dark" onclick="del()">DELETE</button>
+					</div>
+				</div>
+				
+				<div>
+					<h2> Status: </h2>
+
+					<p id="statusT"> Please make sure the program is running and refresh the page.</p>
+				</div>
+			
+			</main>
+			
+			<div class="col-md-8">
+				<h2> Help: </h2>
+
+				<p>This app is helpful if you didn't use a mod manager to install a mod and you want to remove the mod without manually remove every file in the mod.</p>
+				
+				<p>For example, if you can see the esp in the mod manager but can't see the mod itself, you might have the mod installed manually.</p>
+				
+				<p>In this app, you need to config the Game Directory manually and choose which mod you want to remove.</p>
+				
+				<p> The mod uses 7z.exe for reading 7z files.</p>
+				
+				<p> The app can detect your 7z.exe if it's in your PATH or it's installed in C:\Program Files or C:\Program Files(x86). If you installed it somewhere else, you need to config the path for it manually.</p>
+
+				<p>Finally, you just choose a 7z/zip file to read in "Mod To Delete" and click DELETE. The app will delete corresponding files in the Game Directory. </p>
+				
+				<p>It won't delete the 7z or zip you have chosen, the 7z/zip is only needed for the file list. It doesn't support FOMOD. It is made for Skyrim and other games with a "Data" folder. It detects whether the file contains a "Data" folder. If not it will treat the files as if they are the in Data folder</p>
+				
+				<p>After having successfully deleted a file, you can check file list of the files you deleted in the console.</p>
+				
+				<p>How to get the path of a 7z file: Just open it by 7z and copy the shown path.</p>
+				
+			</div>
+		</div>
+	</div>
+	
+	<script>
+		
+		function del(){
+			if(ws.readyState != 1){
+				return
+			}
+			
+			
+			var v = document.getElementById('modFile').value
+			ws.send("mod:"+v); 
+		}
+		
+		
+		function c7f(){
+			if(ws.readyState != 1){
+				return
+			}
+			
+			var v = document.getElementById('c7').value
+			
+			document.getElementById('t7p').innerText = v
+			
+			ws.send("7f:"+v); 
+		}
+		
+		
+		var port = {{.Port}}
+		
+		
+		var ws = new WebSocket("ws://localhost:"+port+"/ws");
+		
+		var statusT = document.getElementById("statusT")
+		
+		ws.onopen = function (event) {
+			statusT.innerText = "Ready."
+			ws.send("launched"); 
+		};
+		
+		ws.onclose = function (event) {
+			statusT.innerText = "Program exited."
+		};
+		
+		ws.onerror = function (event) {
+			statusT.innerText = "Error."
+		};
+
+		function CGD() {
+			if(ws.readyState != 1){
+				return
+			}
+			
+			const gd = document.getElementById('gd');
+			
+            ws.send("cgd:"+gd.value); 
+			document.getElementById('gdp').innerText = gd.value
+        }
+		
+		
+		
+		
+	</script>
+	
+	
+</body>
+</html>
